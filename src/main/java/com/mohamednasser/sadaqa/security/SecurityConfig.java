@@ -25,7 +25,7 @@ public class SecurityConfig {
                 .addFilterBefore(new JwtValidateTokenFilter(JwtService.singleton), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(
                         request -> request
-                                .requestMatchers("/user/signup", "/user/login", "/about", "/home").permitAll()
+                                .requestMatchers("/users/*", "/about", "/home").permitAll()
                                 .anyRequest().authenticated()
                 );
 

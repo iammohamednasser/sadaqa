@@ -7,12 +7,9 @@ import com.mohamednasser.sadaqa.security.AuthenticationService;
 import com.mohamednasser.sadaqa.service.UserService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 /*
@@ -21,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/users", produces = "application/json")
 public class UserController {
+
     UserService userService;
 
     AuthenticationService authenticationService;
@@ -30,25 +28,33 @@ public class UserController {
         this.authenticationService = authenticationService;
     }
 
+    @GetMapping("/{id}")
+    public UserDto getUserInfoById(@PathVariable Long id) throws Exception {
+        return this.userService.findUserById(id);
+    }
+
+    @GetMapping("/")
+    public UserDto getUserInfoByHandle(@RequestParam("handle") String handle) throws Exception {
+        return this.userService.findUserByHandle(handle);
+    }
+
     @PostMapping("/signup")
     public UserDto signup(@RequestBody UserRegistrationData userRegistrationData) throws Exception {
-        UserDto user = this.userService.createUser(userRegistrationData);
-        return user;
+        return this.userService.createUser(userRegistrationData);
     }
 
     /*
      * TODO - check if user exist in the database and return a UserDto in the body
      */
     @PostMapping("/login")
-    public ResponseEntity<UserDto> login(@RequestBody UserLoginData credentials) {
+    public ResponseEntity<String> login(@RequestBody UserLoginData credentials) {
         HttpHeaders headers = new HttpHeaders();
-        try {
-            String jwtToken = authenticationService.authenticate(credentials);
-            headers.add("Authorization", jwtToken);
-            return new ResponseEntity<>(null, headers, HttpStatus.OK);
-
-        } catch (BadCredentialsException e) {
-            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
-        }
+        String jwtToken = authenticationService.authenticate(credentials);
+        headers.add("Authorization", jwtToken);
+        return  ResponseEntity
+                .status(HttpStatus.OK)
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body("successful login");
     }
 }

@@ -16,6 +16,8 @@ public class Users {
 
         public static final String PASSWORD = "9812";
 
+        public static final String HANDLE = "mohamed";
+
         public static final User USER_ENTITY;
 
         public static final UserRegistrationData USER_REGISTRATION_DATA;
@@ -26,15 +28,15 @@ public class Users {
 
             USER_ENTITY = User.builder()
                     .id(1L)
-                    .handle("mohamed")
+                    .handle(HANDLE)
                     .email(EMAIL)
                     .password(PASSWORD)
                     .role(ROLE_USER)
                     .build();
 
-            USER_REGISTRATION_DATA = new UserRegistrationData("mohamed@gmail.com", "mohamed", "9812");
+            USER_REGISTRATION_DATA = new UserRegistrationData(EMAIL, HANDLE, PASSWORD);
 
-            USER_DTO = new UserDto("mohamed@gmail.com", "mohamed");
+            USER_DTO = new UserDto(EMAIL, HANDLE);
 
         }
     }

@@ -2,6 +2,7 @@ package com.mohamednasser.sadaqa.service;
 
 import com.mohamednasser.sadaqa.dto.UserDto;
 import com.mohamednasser.sadaqa.dto.UserRegistrationData;
+import com.mohamednasser.sadaqa.exception.UserNotFoundException;
 import com.mohamednasser.sadaqa.model.Role;
 import com.mohamednasser.sadaqa.model.User;
 import com.mohamednasser.sadaqa.repository.RoleRepository;
@@ -45,7 +46,24 @@ public class UserService {
         if (optional.isEmpty()) {
             throw new Exception("No such user: " + email);
         }
-        User user = optional.get();
+        var user = optional.get();
+        return new UserDto(user.getEmail(), user.getHandle());
+    }
+
+    public UserDto findUserById(Long id) throws Exception{
+        Optional<User> optional = this.userRepository.findById(id);
+        if (optional.isEmpty())
+            throw new UserNotFoundException(id);
+        var user = optional.get();
+        return new UserDto(user.getEmail(), user.getHandle());
+    }
+
+    public UserDto findUserByHandle(String handle) throws Exception {
+
+        Optional<User> optional = this.userRepository.findByHandle(handle);
+        if (optional.isEmpty())
+            throw UserNotFoundException.userNotFundByHandle(handle);
+        var user = optional.get();
         return new UserDto(user.getEmail(), user.getHandle());
     }
 }

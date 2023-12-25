@@ -25,7 +25,16 @@ class SadaqaHomeTest {
     public void testAboutEndpoint() throws Exception {
         mvc.perform(get("/about"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().string("Sadaqa, a beautiful application"));
+    }
+
+    @Test
+    public void testHomeEndpoint() throws  Exception {
+        mvc .perform(get("/"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().string("Welcome to Sadaqa"));
     }
 
 }
