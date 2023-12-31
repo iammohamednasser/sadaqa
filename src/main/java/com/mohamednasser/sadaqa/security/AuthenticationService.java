@@ -44,15 +44,19 @@ public class AuthenticationService {
 
     private String onSuccessfulAuthentication(Authentication authentication) {
         String username = authentication.getName();
-        String role = authentication.getAuthorities()
+        String role = getRole(authentication);
+        Map<String, Object> extraClaims = new HashMap<>();
+        extraClaims.put("role", role);
+        return jwtService.generateJwtToken(username, extraClaims);
+    }
+
+    private static String getRole(Authentication authentication) {
+        return authentication.getAuthorities()
                 .stream()
                 .limit(1)
                 .toList()
                 .get(0)
                 .getAuthority();
-        Map<String, Object> extraClaims = new HashMap<>();
-        extraClaims.put("role", role);
-        return jwtService.generateJwtToken(username, extraClaims);
     }
 
 

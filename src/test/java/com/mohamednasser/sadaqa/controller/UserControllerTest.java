@@ -2,6 +2,8 @@ package com.mohamednasser.sadaqa.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mohamednasser.sadaqa.dto.UserDto;
+import com.mohamednasser.sadaqa.dto.UserLoginData;
+import com.mohamednasser.sadaqa.dto.UserRegistrationData;
 import com.mohamednasser.sadaqa.security.AuthenticationService;
 import com.mohamednasser.sadaqa.service.UserService;
 import com.mohamednasser.sadaqa.testutils.Users;
@@ -18,6 +20,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -51,12 +54,29 @@ public class UserControllerTest {
     @Test
     public void getUserInfoByHandleTest() throws Exception {
         UserDto testUser = Users.FirstUser.USER_DTO;
-
         when(userService.findUserByHandle(any())).thenReturn(testUser);
+
         mvc.perform(get("/users/?handle=mohamed"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().string(mapper.writeValueAsString(testUser)));
     }
 
+    @Test
+    public void userSignupTest() throws Exception {
+        UserDto testUser = Users.FirstUser.USER_DTO;
+        UserRegistrationData registrationData = Users.FirstUser.USER_REGISTRATION_DATA;
+
+        when(userService.createUser(any())).thenReturn(testUser);
+        mvc.perform(post("/users/signup")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(registrationData)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().string(mapper.writeValueAsString(testUser)));
+    }
+
+    @Test
+    public void userLoginTest() {
+    }
 }

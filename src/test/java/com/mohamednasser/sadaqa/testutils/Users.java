@@ -1,6 +1,7 @@
 package com.mohamednasser.sadaqa.testutils;
 
 import com.mohamednasser.sadaqa.dto.UserDto;
+import com.mohamednasser.sadaqa.dto.UserLoginData;
 import com.mohamednasser.sadaqa.dto.UserRegistrationData;
 import com.mohamednasser.sadaqa.model.Role;
 import com.mohamednasser.sadaqa.model.User;
@@ -24,6 +25,8 @@ public class Users {
 
         public static final UserDto USER_DTO;
 
+        public static final UserLoginData USER_LOGIN_DATA;
+
         static {
 
             USER_ENTITY = User.builder()
@@ -37,6 +40,8 @@ public class Users {
             USER_REGISTRATION_DATA = new UserRegistrationData(EMAIL, HANDLE, PASSWORD);
 
             USER_DTO = new UserDto(EMAIL, HANDLE);
+
+            USER_LOGIN_DATA = new UserLoginData(EMAIL, PASSWORD);
 
         }
     }

@@ -20,9 +20,17 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String firstName;
+
+    private String secondName;
+
     private String email;
 
     private String handle;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "column_id")
+    private Country country;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;

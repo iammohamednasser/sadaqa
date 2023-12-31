@@ -3,7 +3,6 @@ package com.mohamednasser.sadaqa.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.List;
 
 @Entity
 @Data
@@ -11,11 +10,21 @@ import java.util.List;
 public class Country {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    private String iso;
 
     private String name;
 
-    @OneToMany(mappedBy = "country",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<City> cities;
+    @Column(name = "nice_name")
+    private String niceName;
+
+    private String iso3;
+
+    @Column(name = "num_code")
+    private int numCode;
+
+    @Column(name = "phone_code")
+    private int phoneCode;
+
 }
