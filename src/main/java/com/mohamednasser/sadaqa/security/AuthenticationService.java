@@ -24,30 +24,33 @@ public class AuthenticationService {
 
     private final UserRepository userRepository;
 
-    public AuthenticationService(AuthenticationManager authenticationManager, JwtService jwtService, UserRepository userRepository) {
+    public AuthenticationService(
+            AuthenticationManager authenticationManager, JwtService jwtService, UserRepository userRepository) {
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
         this.userRepository = userRepository;
     }
 
     public String authenticate(UserLoginData credentials) throws BadCredentialsException {
-
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        credentials.email(),
-                        credentials.password()
-                )
-        );
-        if (authentication != null) return onSuccessfulAuthentication(authentication);
-        throw new BadCredentialsException("Invalid credentials");
+        String email = credentials.email();
+        String password = credentials.password();
+        var usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(email, password);
+        var authentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
+        if (authentication != null)
+            return onSuccessfulAuthentication(authentication);
+        throw new BadCredentialsException("Invalid credentials.");
     }
 
     private String onSuccessfulAuthentication(Authentication authentication) {
+        return generateJwtToken(authentication);
+    }
+
+    private String generateJwtToken(Authentication authentication) {
         String username = authentication.getName();
         String role = getRole(authentication);
-        Map<String, Object> extraClaims = new HashMap<>();
-        extraClaims.put("role", role);
-        return jwtService.generateJwtToken(username, extraClaims);
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("role", role);
+        return jwtService.generateJwtToken(username, claims);
     }
 
     private static String getRole(Authentication authentication) {
@@ -59,11 +62,19 @@ public class AuthenticationService {
                 .getAuthority();
     }
 
-
     public User getAuthenticatedUser() {
-        String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email = getAuthenticatedUserEmail();
+        return getUserOrThrowException(email);
+    }
+
+    private User getUserOrThrowException(String email) {
         Optional<User> user = userRepository.findByEmail(email);
-        if (user.isEmpty()) throw new UsernameNotFoundException("No such user.");
+        if (user.isEmpty())
+            throw new UsernameNotFoundException("No such user.");
         return user.get();
+    }
+
+    private static String getAuthenticatedUserEmail() {
+        return (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 }

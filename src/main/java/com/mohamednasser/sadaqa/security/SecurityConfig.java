@@ -17,12 +17,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtValidateTokenFilter jwtValidateTokenFilter) throws Exception {
 
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(new JwtValidateTokenFilter(JwtService.singleton), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtValidateTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(
                         request -> request
                                 .requestMatchers("/users/*", "/about", "/home").permitAll()
