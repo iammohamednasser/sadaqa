@@ -26,7 +26,7 @@ public class Cause {
     private String body;
 
     @Column(name = "credibility_rate")
-    private float credibility;
+    private float credibility = 0;
 
     @Column(name = "votes")
     private int numberOfVotes = 0;

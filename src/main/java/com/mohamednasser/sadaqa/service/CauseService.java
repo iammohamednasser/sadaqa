@@ -1,16 +1,17 @@
 package com.mohamednasser.sadaqa.service;
 
 import com.mohamednasser.sadaqa.dto.CauseIn;
+import com.mohamednasser.sadaqa.dto.CauseOut;
 import com.mohamednasser.sadaqa.exception.CauseNotFoundException;
 import com.mohamednasser.sadaqa.model.Cause;
 import com.mohamednasser.sadaqa.model.User;
 import com.mohamednasser.sadaqa.repository.CauseRepository;
 import com.mohamednasser.sadaqa.security.AuthenticationService;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -25,13 +26,13 @@ public class CauseService {
         this.authenticationService = authenticationService;
     }
 
-    public Cause getCause(Long causeId) throws CauseNotFoundException {
+    public CauseOut getCause(Long causeId) throws CauseNotFoundException {
         Optional<Cause> cause = causeRepository.findById(causeId);
         if (cause.isEmpty()) throw new CauseNotFoundException(causeId);
-        return cause.get();
+        return CauseOut.createInstanceFrom(cause.get());
     }
 
-    public Cause saveCause(CauseIn dto) throws Exception {
+    public CauseOut saveCause(CauseIn dto) throws Exception {
         User user = this.authenticationService.getAuthenticatedUser();
 
         Cause aCause = Cause.builder()
@@ -42,12 +43,15 @@ public class CauseService {
                 .credibility(0)
                 .build();
 
-        return this.causeRepository.save(aCause);
-
+        Cause cause = this.causeRepository.save(aCause);
+        return CauseOut.createInstanceFrom(cause);
     }
-    public Page<Cause> getAllCauses(String handle, int page, int size) {
+    public List<CauseOut> getAllCauses(String handle, int page, int size) {
         PageRequest pr = PageRequest.of(page, size);
-        return this.causeRepository.findAllByHandle(handle, pr);
+        return this.causeRepository.findAllByHandle(handle, pr)
+                .stream()
+                .map(CauseOut::createInstanceFrom)
+                .toList();
     }
 
 

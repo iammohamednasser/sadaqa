@@ -1,6 +1,5 @@
 package com.mohamednasser.sadaqa.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mohamednasser.sadaqa.dto.UserDto;
 import com.mohamednasser.sadaqa.dto.UserLoginData;

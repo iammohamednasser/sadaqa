@@ -1,5 +1,5 @@
 package com.mohamednasser.sadaqa.dto;
 
-public record CauseIn(Long id, String title, String body) {
+public record CauseIn(String title, String body) {
 
 }
